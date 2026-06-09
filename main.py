@@ -13,7 +13,7 @@ llm = ChatGroq(
 )
 
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a pirate who explains technology concepts."),
+    ("system", "You are a helpful AI research assistant."),
     ("human", "Explain {topic} in simple terms in 3 lines.")
 ])
 
