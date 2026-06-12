@@ -21,6 +21,7 @@ class State(TypedDict):
     answer: str
     is_research: bool
     search_results: str
+    sub_questions: list 
 
 
 def classifier_node(state: State) -> State:
@@ -35,16 +36,39 @@ def classifier_node(state: State) -> State:
     print(f"LLM said: {answer}")
     return {"is_research": "yes" in answer}
 
-def search_node(state: State) -> State:
+def planner_node(state: State) -> State:
     question = state["question"]
-    results = tavily.search(question)
 
-    content =""
-    for r in results["results"]:
-        content += r["title"] + "\n"
-        content += r["content"] + "\n\n"   
+    prompt = f"""You are a research planner. Break the following question into 3-4 focused sub-questions that together will help answer the main question comprehensively.
+    
+    Main question: {question} 
 
-    return {"search_results": content} 
+    Return ONLY a numbered list of sub-questions, nothing else. Example format:
+    1. Sub-question one
+    2. Sub-question two
+    3. Sub-question three"""
+
+    response = llm.invoke(prompt)
+
+    #parse the numbered list into a python list 
+    lines = response.content.strip().split("\n")
+    sub_questions = [line.split(". ", 1)[1] for line in lines if line.strip() and line[0].isdigit()]
+    
+    print(f"Sub-questions: {sub_questions}")
+    return {"sub_questions": sub_questions}
+
+def search_node(state: State) -> State:
+    sub_questions = state['sub_questions']
+
+    all_results =""
+    for question in sub_questions:
+        results = tavily.search(question)
+        all_results += f"Search results for: {question}\n"
+        for r in results["results"][:2]:   # only first 2 results
+            all_results += r["title"] + "\n"
+            all_results+= r["content"][:500] + "\n\n"     # only first 500 chars
+
+    return {"search_results": all_results} 
 
 def reject_node(state: State) -> State:
     return{"answer": "Sorry, this doesn't seem like a research question."}
@@ -78,6 +102,7 @@ Provide a comprehensive answer based on the search results."""
 graph = StateGraph(State)
 
 graph.add_node("classifier", classifier_node)
+graph.add_node("planner", planner_node)
 graph.add_node("search", search_node)
 graph.add_node("answer", answer_node)
 graph.add_node("reject", reject_node)
@@ -85,10 +110,11 @@ graph.add_node("reject", reject_node)
 graph.set_entry_point("classifier")
 
 graph.add_conditional_edges("classifier", route_question, {
-    "answer": "search",
+    "answer": "planner",
     "reject": "reject"
 })
 
+graph.add_edge("planner", "search")
 graph.add_edge("search", "answer")
 graph.add_edge("answer", END)
 graph.add_edge("reject", END)
