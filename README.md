@@ -47,6 +47,7 @@ pip install -r requirements.txt
 Add your API keys to `.env`:
 
 GROQ_API_KEY=your_key
+
 TAVILY_API_KEY=your_key
 
 Run:
