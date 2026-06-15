@@ -102,6 +102,37 @@ graph.add_edge("roadmap", END)
 
 career_app = graph.compile()
 
+def interview_prep(company: str, role: str) -> str:
+    queries =[
+        f"{company} {role} interview question 2026",
+        f"{company} {role} interview process and rounds",
+        f"How to crack {company} {role} interview tips"
+    ]
+
+    all_results = ""
+    for query in queries:
+        results = tavily.search(query)
+        for r in results["results"][:2]:   # only first 2 results
+            all_results += r["title"] + "\n"
+            all_results+= r["content"][:400] + "\n\n"     # only first 400 chars
+
+            prompt = f"""You are an interview coach. Based on the research below, help a candidate prepare for {role} at {company}.
+
+Research:
+{all_results}
+
+Provide:
+1. 🎯 What {company} tests in {role} interviews
+2. 📝 Top 5 likely interview questions
+3. 📚 What to study in the next 7 days
+4. 💡 Key tips specific to {company}
+
+Be specific and actionable."""
+    
+    response = llm.invoke(prompt)
+    return {"interview_prep": response.content}
+    
+
 if __name__ == "__main__":
     result = career_app.invoke({
         "current_skills": "Python, Pandas, SQL, LangChain, LangGraph, Streamlit, basic ML",

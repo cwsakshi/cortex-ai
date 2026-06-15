@@ -9,6 +9,7 @@ st.subheader("Your AI-Powered Career & Research Intelligence System")
 
 mode = st.selectbox("What do you want to do?", [
     "🎯 Career Intelligence — Get my personalized roadmap",
+    "🎤 Interview Prep — Prepare for a specific company",
     "🔍 Research Assistant — Deep research on any topic"
 ])
 
@@ -51,6 +52,32 @@ if "Career Intelligence" in mode:
         else:
             st.warning("Please fill in all three fields.")
 
+elif "Interview Prep" in mode:
+    st.subheader("🎤 Interview Prep")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        company = st.text_input("Company Name", placeholder="e.g. Amazon, Goldman Sachs")
+    with col2:
+        role = st.text_input("Role", placeholder="e.g. SDE, Data Analyst, AI Engineer")
+    
+    if st.button("Prepare Me! 🎯"):
+        if company and role:
+            with st.spinner(f"Researching {company} {role} interview..."):
+                from career_agent import interview_prep
+                result = interview_prep(company, role)
+            st.markdown(result["interview_prep"])
+            
+            st.download_button(
+                label="📥 Download Interview Prep",
+                data=result["interview_prep"],
+                file_name=f"{company}_{role}_prep.txt",
+                mime="text/plain"
+            )
+        else:
+            st.warning("Please enter both company and role.")
+
 else:
     st.subheader("🔍 Research Assistant")
     
@@ -58,8 +85,9 @@ else:
     
     if st.button("Research 🔍"):
         if question:
-            with st.spinner("Researching..."):
+            with st.spinner("🔍 Searching..."):
                 result = app.invoke({"question": question})
             st.markdown(result["answer"])
         else:
             st.warning("Please enter a question.")
+            
