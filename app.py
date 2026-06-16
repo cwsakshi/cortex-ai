@@ -4,8 +4,25 @@ from career_agent import career_app
 
 st.set_page_config(page_title="Cortex AI", page_icon="🧠", layout="wide")
 
-st.title("🧠 Cortex AI")
-st.subheader("Your AI-Powered Career & Research Intelligence System")
+st.markdown("""
+<div style='text-align: center; padding: 20px;'>
+    <h1>🧠 Cortex AI</h1>
+    <p style='font-size: 18px; color: gray;'>Your AI-Powered Career Intelligence System</p>
+    <p style='font-size: 15px;'>Built for engineering students preparing for placements — completely free.</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.divider()
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.info("🎯 **Career Intelligence**\nGet your personalized skill gap analysis and week-by-week learning roadmap")
+with col2:
+    st.info("🎤 **Interview Prep**\nResearch any company and get exactly what to study before your interview")
+with col3:
+    st.info("🔍 **Research Assistant**\nAsk any question and get a structured research report in minutes")
+
+st.divider()
 
 mode = st.selectbox("What do you want to do?", [
     "🎯 Career Intelligence — Get my personalized roadmap",
@@ -49,6 +66,20 @@ if "Career Intelligence" in mode:
             
             st.subheader("🗺️ Your Personalized Roadmap")
             st.markdown(result["roadmap"])
+
+            st.download_button(
+                label="📥 Download Skill Gap Analysis",
+                data=result["skill_gaps"],
+                file_name="skill_gap_analysis.txt",
+                mime="text/plain"
+            )
+            st.download_button(
+                label="📥 Download Roadmap",
+                data=result["roadmap"],
+                file_name="my_learning_roadmap.txt",
+                mime="text/plain"
+            )
+
         else:
             st.warning("Please fill in all three fields.")
 
