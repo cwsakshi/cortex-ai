@@ -131,7 +131,39 @@ Be specific and actionable."""
     
     response = llm.invoke(prompt)
     return {"interview_prep": response.content}
-    
+
+def resume_analyzer(resume_text: str, dream_role: str) -> dict:
+    queries = [
+        f"{dream_role} resume requirements and key skills 2026",
+        f"What recuriters look for in {dream_role} resumes",
+    ]
+
+    all_results = ""
+    for query in queries:
+        results = tavily.search(query)
+        for r in results["results"][:2]:   # only first 2 results
+            all_results += r["title"] + "\n"
+            all_results+= r["content"][:400] + "\n\n"     # only first 400 chars
+
+    prompt = f"""You are an expert resume reviewer. Analyze this resume against the requirements for {dream_role}.
+
+Resume:
+{resume_text}
+
+Job Market Research:
+{all_results}
+
+Provide:
+1. ✅ Strengths — what's already strong in this resume
+2. ❌ Missing — critical skills/keywords missing for {dream_role}
+3. 📝 Specific suggestions — exact changes to make
+4. 🎯 ATS Score estimate — out of 10, how well this resume would pass automated screening
+
+Be specific and actionable."""
+
+    response = llm.invoke(prompt)
+    return {"resume_analysis": response.content}
+
 
 if __name__ == "__main__":
     result = career_app.invoke({

@@ -27,6 +27,7 @@ st.divider()
 mode = st.selectbox("What do you want to do?", [
     "🎯 Career Intelligence — Get my personalized roadmap",
     "🎤 Interview Prep — Prepare for a specific company",
+    "📄 Resume Analyzer — Check my resume against a role",
     "🔍 Research Assistant — Deep research on any topic"
 ])
 
@@ -108,6 +109,29 @@ elif "Interview Prep" in mode:
             )
         else:
             st.warning("Please enter both company and role.")
+
+elif "Resume Analyzer" in mode:
+    st.subheader("📄 Resume Analyzer")
+    
+    resume_text = st.text_area("Paste your resume text here", height=250, 
+        placeholder="Paste your full resume content ...")
+    dream_role = st.text_input("Dream role", placeholder="e.g. AI/ML Engineer")
+
+    if st.button("Analyze My Resume 📝"):
+        if resume_text and dream_role:
+            with st.spinner("Analyzing your resume against job market..."):
+                from career_agent import resume_analyzer
+                result = resume_analyzer(resume_text, dream_role)
+            st.markdown(result["resume_analysis"])
+            
+            st.download_button(
+                label="📥 Download Analysis",
+                data=result["resume_analysis"],
+                file_name="resume_analysis.txt",
+                mime="text/plain"
+            )
+        else:
+            st.warning("Please paste your resume and enter a dream role.")
 
 else:
     st.subheader("🔍 Research Assistant")
