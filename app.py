@@ -14,13 +14,15 @@ st.markdown("""
 
 st.divider()
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.info("🎯 **Career Intelligence**\nGet your personalized skill gap analysis and week-by-week learning roadmap")
 with col2:
     st.info("🎤 **Interview Prep**\nResearch any company and get exactly what to study before your interview")
 with col3:
     st.info("🔍 **Research Assistant**\nAsk any question and get a structured research report in minutes")
+with col4:
+    st.info("📄 **Resume Analyzer**\nGet detailed feedback on your resume and how to improve it")
 
 st.divider()
 
