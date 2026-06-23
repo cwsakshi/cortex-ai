@@ -140,11 +140,18 @@ def resume_analyzer(resume_text: str, dream_role: str) -> dict:
 
     all_results = ""
     for query in queries:
-        results = tavily.search(query)
-        for r in results["results"][:2]:   # only first 2 results
-            all_results += r["title"] + "\n"
-            all_results+= r["content"][:400] + "\n\n"     # only first 400 chars
+        try:
+            results = tavily.search(query)
+            for r in results["results"][:2]:
+                all_results += r["title"] + "\n"
+                all_results += r["content"][:400] + "\n\n"
+        except Exception as e:
+            print(f"Tavily search failed for query '{query}': {e}")
+            continue
 
+    if not all_results:
+        return {"resume_analysis": "Sorry, we couldn't research this role right now. Please try again in a moment."}
+    
     prompt = f"""You are an expert resume reviewer. Analyze this resume against the requirements for {dream_role}.
 
 Resume:
@@ -161,8 +168,12 @@ Provide:
 
 Be specific and actionable."""
 
-    response = llm.invoke(prompt)
-    return {"resume_analysis": response.content}
+    try:
+        response = llm.invoke(prompt)
+        return {"resume_analysis": response.content}
+    except Exception as e:
+        print(f"LLM call failed: {e}")
+        return {"resume_analysis": "Sorry, something went wrong analyzing your resume. Please try again."}
 
 
 if __name__ == "__main__":
