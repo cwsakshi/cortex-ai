@@ -61,8 +61,13 @@ Provide a structured analysis with:
 
 Be specific and concise."""
 
-    response = llm.invoke(prompt)
-    return {"skill_gaps": response.content}
+    try:
+        response = llm.invoke(prompt)
+        return {"skill_gaps": response.content}
+    except Exception as e:
+        print(f"LLM call failed: {e}")
+        return {"skill_gaps": "Sorry, something went wrong analyzing your skill gap. Please try again."}
+
 
 def roadmap_node(state: CareerState) -> CareerState:
     current_skills = state["current_skills"]
@@ -85,9 +90,13 @@ Create a structured roadmap with:
 
 Be specific, actionable, and only suggest completely free resources."""
 
-    response = llm.invoke(prompt)
-    return {"roadmap": response.content}
-
+    try:
+        response = llm.invoke(prompt)
+        return {"roadmap": response.content}
+    except Exception as e:
+        print(f"LLM call failed: {e}")
+        return {"roadmap": "Sorry, something went wrong building your roadmap. Please try again."}
+    
 #build the graph 
 graph = StateGraph(CareerState)
 
