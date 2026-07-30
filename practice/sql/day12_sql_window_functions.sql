@@ -1,4 +1,4 @@
--- Day 22 - Week 1 - Unified Placement Prep Schedule
+-- Day 12 :
 -- Topic: SQL Window Functions (RANK, PARTITION BY)
 -- Task: Top 3 employees by total sales, per region
 
