@@ -1,4 +1,4 @@
--- Day 23 - Week 1 - Unified Placement Prep Schedule
+-- Day 13
 -- Topic: Self-Joins + Subqueries
 
 -- 1. Employees who earn more than their manager (self-join)
