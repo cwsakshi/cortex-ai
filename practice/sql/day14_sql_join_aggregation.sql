@@ -1,4 +1,4 @@
--- Day 24 (SQL Day 14) - Unified Placement Prep Schedule
+-- SQL Day 14 - Unified Placement Prep Schedule
 -- Topic: Multi-table joins + aggregation
 
 -- Department with the highest average salary
