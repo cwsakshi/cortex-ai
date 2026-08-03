@@ -1,4 +1,4 @@
--- Day 25 - Unified Placement Prep Schedule
+-- Day 15 - Unified Placement Prep Schedule
 -- Topic: HAVING + multiple aggregations
 
 -- Departments with more than 5 employees AND average salary > 50000
